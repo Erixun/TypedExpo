@@ -10,18 +10,22 @@ import GoalInput from '../../components/GoalInput';
 
 type GoalItem = {
   text: string;
-  key: number;
+  id: number;
 };
 
 export default function TabListScreen() {
   const [goals, setGoals] = useState<GoalItem[]>([]);
 
   const addGoalHandler = (enteredGoal: string) => {
-    setGoals((goals) => [{ text: enteredGoal, key: Math.random() }, ...goals]);
+    setGoals((goals) => [{ text: enteredGoal, id: Math.random() }, ...goals]);
+  };
+
+  const deleteGoalHandler = (goalKey: number) => {
+    setGoals((goals) => goals.filter((goal) => goal.id !== goalKey));
   };
   
   const toGoalItem = (itemData: ListRenderItemInfo<GoalItem>) => (
-    <GoalItem data={itemData} title={itemData.item?.text} />
+    <GoalItem data={itemData} id={itemData.item.id} onDelete={deleteGoalHandler} title={itemData.item?.text} />
   )
 
   return (
@@ -29,7 +33,7 @@ export default function TabListScreen() {
       <GoalInput onAddGoal={addGoalHandler} />
       <View style={styles.containerGoalList}>
         <FlatList
-          keyExtractor={(item, index) => item.key.toString()}
+          keyExtractor={(item) => item.id.toString()}
           alwaysBounceVertical={false}
           data={goals}
           renderItem={toGoalItem}
